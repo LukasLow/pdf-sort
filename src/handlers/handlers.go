@@ -10,10 +10,10 @@ import (
 	"sort"
 	"strings"
 
-	"pdfsort/src/config"
-	"pdfsort/src/models"
-	"pdfsort/src/services"
-	"pdfsort/src/utils"
+	"pdf-sort/src/config"
+	"pdf-sort/src/models"
+	"pdf-sort/src/services"
+	"pdf-sort/src/utils"
 )
 
 func GetNextPDF(w http.ResponseWriter, r *http.Request) {
