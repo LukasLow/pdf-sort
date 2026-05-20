@@ -34,6 +34,9 @@ COPY --from=builder /build/pdf-sort /app/pdf-sort
 COPY --from=builder /build/src/templates /app/src/templates
 COPY --from=builder /build/src/static /app/src/static
 
+# Run tests during build to ensure correctness
+RUN go test ./src/services/... 
+
 EXPOSE 4000
 
 WORKDIR /documents
