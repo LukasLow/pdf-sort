@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+package templates
+
+// IndexHTML contains the HTML template for the index page.
+// It is embedded directly into the binary so that the application does not need to read
+// external files at runtime.
+const IndexHTML = `<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -55,4 +60,5 @@ PDF komprimieren
 
 <script src="/static/app.js"></script>
 </body>
-</html>
+</html>`
+

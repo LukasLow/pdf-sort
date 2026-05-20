@@ -13,6 +13,7 @@ import (
 	"pdf-sort/src/config"
 	"pdf-sort/src/models"
 	"pdf-sort/src/services"
+	"pdf-sort/src/templates"
 	"pdf-sort/src/utils"
 )
 
@@ -232,7 +233,8 @@ func UndoLastAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleIndexPage(w http.ResponseWriter, r *http.Request) {
-    tmpl, err := template.ParseFiles("src/templates/index.html.go")
+	// Use embedded template instead of reading from file at runtime
+	tmpl, err := template.New("index").Parse(templates.IndexHTML)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
