@@ -5,8 +5,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"pdfsort/src/config"
-	"pdfsort/src/models"
+	"pdf-sort/src/config"
+	"pdf-sort/src/models"
 )
 
 func LoadConfig() models.Config {
