@@ -41,7 +41,8 @@ COPY --from=builder /build/pdf-sort /app/pdf-sort
 
 # Templates + Static Files kopieren
 COPY --from=builder /build/src/templates /app/src/templates
-COPY --from=builder /build/src/static /app/src/static
+ # The static assets are located under src/embed/static in the repository.
+ COPY --from=builder /build/src/embed/static /app/src/static
 
 EXPOSE 4000
 
