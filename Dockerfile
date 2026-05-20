@@ -1,16 +1,23 @@
-# === STAGE 1: Go-Code autark kompilieren ===
+# === STAGE 1: Go Build ===
 FROM golang:1.21-alpine3.19 AS builder
+
 WORKDIR /build
 
-COPY main.go go.mod ./
-COPY vendor/ ./vendor/
+# Gesamten Source kopieren
+COPY . .
 
-# Schaltet CGO aus, optimiert für Linux und baut mit den lokalen Abhängigkeiten
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -o pdf-sort main.go
+# Falls vendor genutzt wird:
+RUN go mod vendor
 
+# Build
+RUN CGO_ENABLED=0 GOOS=linux \
+    go build -mod=vendor -o pdf-sort .
 
-# === STAGE 2: Laufzeit-Image mit deinen fixierten stabilen Versionen ===
+# =========================================================
+
+# === STAGE 2: Runtime ===
 FROM alpine:3.19
+
 WORKDIR /app
 
 RUN apk add --no-cache \
@@ -20,9 +27,15 @@ RUN apk add --no-cache \
     tesseract-ocr-data-deu=5.3.3-r1 \
     tzdata=2025b-r0
 
+# Binary kopieren
 COPY --from=builder /build/pdf-sort /app/pdf-sort
 
+# Templates + Static Files kopieren
+COPY --from=builder /build/src/templates /app/src/templates
+COPY --from=builder /build/src/static /app/src/static
+
 EXPOSE 4000
+
 WORKDIR /documents
 
 CMD ["/app/pdf-sort"]
