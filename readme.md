@@ -1,3 +1,6 @@
+docker run --pull=always --rm -it -p 4000:4000 -v "$(pwd):/documents" ghcr.io/lukaslow/pdf-sort:latest
+
+
 docker run --rm -it -p 4000:4000 -v "$(pwd):/documents" ghcr.io/lukaslow/pdf-sort:latest
 
 
