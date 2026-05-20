@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"pdf-sort/src/config"
+	"pdf-sort/src/embed"
 	"pdf-sort/src/handlers"
 )
 
@@ -44,13 +46,22 @@ func main() {
 		),
 	)
 
+	// Serve static assets from the embedded filesystem
+	staticFS, _ := fs.Sub(embed.StaticFiles, "static")
 	http.Handle("/static/",
-		http.StripPrefix("/static/",
-			http.FileServer(http.Dir("src/static")),
-		),
+		http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))),
 	)
 
-	http.HandleFunc("/", handlers.HandleIndexPage)
+	// Serve the embedded index.html at the root path
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        data, err := embed.StaticFiles.ReadFile("static/index.html")
+        if err != nil {
+            http.Error(w, "index not found", http.StatusInternalServerError)
+            return
+        }
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        _, _ = w.Write(data)
+    })
 
 	fmt.Printf("\n🚀 PDF-Sort gestartet auf %s\n", config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, nil))
