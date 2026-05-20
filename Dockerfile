@@ -10,8 +10,10 @@ COPY . .
 RUN go mod vendor
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux \
-    go build -mod=vendor -o pdf-sort .
+    RUN CGO_ENABLED=0 GOOS=linux \
+        go build -mod=vendor -o pdf-sort . && \
+        # Run tests in the builder where Go is available
+        go test ./src/services/...
 
 # =========================================================
 
@@ -33,9 +35,7 @@ COPY --from=builder /build/pdf-sort /app/pdf-sort
 # Templates + Static Files kopieren
 COPY --from=builder /build/src/templates /app/src/templates
 COPY --from=builder /build/src/static /app/src/static
-
-# Run tests during build to ensure correctness
-RUN go test ./src/services/... 
+    
 
 EXPOSE 4000
 

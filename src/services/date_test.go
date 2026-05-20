@@ -34,3 +34,13 @@ func TestFindDateVariants(t *testing.T) {
 	assertDate(t, "29 Oct 2025", "2025", "10", "29")
 	assertDate(t, "2025 Oct 29", "2025", "10", "29")
 }
+
+func TestFindDateEdgeCases(t *testing.T) {
+	// Empty string should return empty components
+	assertDate(t, "", "", "", "")
+
+	// Invalid formats should not panic and return empty strings
+	assertDate(t, "2025/10/29", "", "", "")
+	assertDate(t, "29-10-2025", "", "", "")
+	assertDate(t, "random text without date", "", "", "")
+}
