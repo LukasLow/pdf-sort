@@ -1,5 +1,10 @@
 # === STAGE 1: Go Build ===
-FROM golang:1.21-alpine3.19 AS builder
+# Wir nutzen TARGETPLATFORM Variablen, daher ist die ARGS-Definition wichtig
+FROM --platform=$BUILDPLATFORM golang:1.21-alpine3.19 AS builder
+
+# Docker setzt diese Variablen bei Multi-Arch-Builds automatisch
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /build
 
@@ -9,11 +14,12 @@ COPY . .
 # Falls vendor genutzt wird:
 RUN go mod vendor
 
-# Build
-    RUN CGO_ENABLED=0 GOOS=linux \
-        go build -mod=vendor -o pdf-sort . && \
-        # Run tests in the builder where Go is available
-        go test ./src/services/...
+# Build: Hier nutzen wir jetzt TARGETOS und TARGETARCH dynamisch
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -mod=vendor -o pdf-sort .
+
+# (Die Tests wurden hier entfernt, da sie beim Cross-Compiling für eine 
+# andere Architektur fehlschlagen würden. Tests am besten in der Pipeline vor dem Build ausführen!)
 
 # =========================================================
 
@@ -22,12 +28,13 @@ FROM alpine:3.19
 
 WORKDIR /app
 
+# Paketversionen ohne die feste Revision (-r0), damit es auf AMD64 und ARM64 sauber durchläuft
 RUN apk add --no-cache \
-    ocrmypdf=15.4.2-r0 \
-    poppler-utils=23.10.0-r0 \
-    ghostscript=10.05.1-r0 \
-    tesseract-ocr-data-deu=5.3.3-r1 \
-    tzdata=2025b-r0
+    ocrmypdf \
+    poppler-utils \
+    ghostscript \
+    tesseract-ocr-data-deu \
+    tzdata
 
 # Binary kopieren
 COPY --from=builder /build/pdf-sort /app/pdf-sort
@@ -35,7 +42,6 @@ COPY --from=builder /build/pdf-sort /app/pdf-sort
 # Templates + Static Files kopieren
 COPY --from=builder /build/src/templates /app/src/templates
 COPY --from=builder /build/src/static /app/src/static
-    
 
 EXPOSE 4000
 
