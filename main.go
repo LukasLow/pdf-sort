@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 
 	"pdf-sort/src/config"
 	"pdf-sort/src/handlers"
@@ -53,4 +54,18 @@ func main() {
 
 	fmt.Printf("\n🚀 PDF-Sort gestartet auf %s\n", config.Port)
 	log.Fatal(http.ListenAndServe(config.Port, nil))
+}
+
+// BuildTime is injected at compile time via -ldflags "-X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+var BuildTime string = ""
+
+func init() {
+	if BuildTime == "" {
+		// Fallback to current time if not set during build
+		BuildTime = time.Now().UTC().Format(time.RFC3339)
+	}
+	http.HandleFunc("/buildinfo", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "{\"build\": \"%s\"}", BuildTime)
+	})
 }

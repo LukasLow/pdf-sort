@@ -141,3 +141,31 @@ async function processFile() {
 }
 
 loadNextFile();
+
+// Fetch and display build information
+async function loadBuildInfo() {
+    try {
+        const resp = await fetch('/buildinfo');
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const el = document.getElementById('build-info');
+        if (el) {
+            el.textContent = `Build: ${data.build}`;
+        }
+    } catch (e) {
+        // ignore errors
+    }
+}
+
+loadBuildInfo();
+
+function deleteFile() {
+    if (!currentFile) return;
+    if (!window.confirm('Bist du sicher, dass du diese Datei löschen möchtest?')) {
+        return;
+    }
+    // call trash endpoint
+    fetch(`/trash?filename=${encodeURIComponent(currentFile)}`)
+        .then(() => loadNextFile())
+        .catch(() => {});
+}

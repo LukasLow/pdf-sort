@@ -15,6 +15,8 @@
 
 <h1>📄 PDF Archivierung</h1>
 
+    <div id="build-info" style="font-size:0.8rem; color:#666; margin-bottom:0.5rem;">Build: loading...</div>
+
 <div class="meta-box">
 <div><strong>Dateigröße:</strong> <span id="file-size">-</span></div>
 <div><strong>PPI:</strong> <span id="ppi">-</span></div>
@@ -47,6 +49,7 @@ PDF komprimieren
 </div>
 
 <button onclick="processFile()">Archivieren</button>
+<button id="delete-btn" style="font-size:0.7rem; margin-left:0.5rem;" onclick="deleteFile()">Löschen</button>
 
 </div>
 
