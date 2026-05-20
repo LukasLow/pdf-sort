@@ -232,7 +232,7 @@ func UndoLastAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleIndexPage(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("src/templates/index.html")
+    tmpl, err := template.ParseFiles("src/templates/index.html.go")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
