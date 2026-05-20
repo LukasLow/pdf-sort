@@ -7,8 +7,8 @@ import (
 	"os"
 	"os/exec"
 
-	"pdfsort/src/config"
-	"pdfsort/src/handlers"
+	"pdf-sort/src/config"
+	"pdf-sort/src/handlers"
 )
 
 func main() {
