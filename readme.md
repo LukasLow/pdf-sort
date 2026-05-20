@@ -1,3 +1,7 @@
+docker run --rm -it -p 4000:4000 -v "$(pwd):/documents" ghcr.io/lukaslow/pdf-sort:latest
+
+
+
 '''sh
 alias pdf-sort='docker run --rm -it -p 4000:4000 -v "$(pwd):/documents" ghcr.io/lukaslow/pdf-sort:latest'
 ''
